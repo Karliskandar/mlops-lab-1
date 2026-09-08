@@ -60,3 +60,51 @@ After cloning the Git repository into a new directory, the DVC-tracked data was 
 
 Question 8:
 
+No. After checking out the previous Git commit and running dvc checkout, the processed directories disappear because the older sample_data.dvc points to the previous version of the dataset, before those directories were created.
+
+ After going back before the commit:
+ 
+ PS C:\Users\Admin\OneDrive\Documents\Shit\5th year\ML ops\mlops-lab-1> Get-ChildItem sample_data
+
+
+    Directory: C:\Users\Admin\OneDrive\Documents\Shit\5th year\ML 
+    ops\mlops-lab-1\sample_data
+
+
+Mode                 LastWriteTime         Length Name            
+----                 -------------         ------ ----            
+d-----          9/8/2026   6:35 PM                evaluation      
+d-----          9/8/2026   6:35 PM                training        
+d-----          9/8/2026   6:35 PM                validation      
+
+
+
+
+After getting back to the main branch :
+
+
+(.venv) PS C:\Users\Admin\OneDrive\Documents\Shit\5th year\ML ops\mlops-lab-1> git checkout main
+Previous HEAD position was 8199522 Add Sample dataset with DVC
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+(.venv) PS C:\Users\Admin\OneDrive\Documents\Shit\5th year\ML ops\mlops-lab-1> dvc checkout
+Building workspace index              |16.7k [00:00, 28.5kentry/s]
+Comparing indexes                     |16.7k [00:00, 57.4kentry/s]
+Applying changes                        |12.0 [00:00,   626file/s]
+M       sample_data\
+(.venv) PS C:\Users\Admin\OneDrive\Documents\Shit\5th year\ML ops\mlops-lab-1> Get-ChildItem sample_data
+
+
+    Directory: C:\Users\Admin\OneDrive\Documents\Shit\5th year\ML 
+    ops\mlops-lab-1\sample_data
+
+
+Mode                 LastWriteTime         Length Name            
+----                 -------------         ------ ----            
+d-----          9/8/2026   6:35 PM                evaluation      
+d-----          9/8/2026   8:52 PM                food11_processed
+d-----          9/8/2026   8:52 PM                food11_processed
+                                                  _mini           
+d-----          9/8/2026   6:35 PM                training        
+d-----          9/8/2026   6:35 PM                validation      
+
