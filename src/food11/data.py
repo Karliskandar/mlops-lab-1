@@ -12,9 +12,11 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 
-RAW_ROOT = ROOT / "sample_data"
-PROCESSED_ROOT = RAW_ROOT / "food11_processed"
-MINI_ROOT = RAW_ROOT / "food11_processed_mini"
+RAW_ROOT = ROOT / "data"
+
+OUTPUT_ROOT = ROOT / "local_data"
+PROCESSED_ROOT = OUTPUT_ROOT / "food11_processed"
+MINI_ROOT = OUTPUT_ROOT / "food11_processed_mini"
 
 print("SCRIPT IS RUNNING")
 print("ROOT =", ROOT)
