@@ -8,11 +8,14 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "fastapi>=0.141.1",
     "mlflow>=3.16.0",
     "pillow>=12.3.0",
+    "python-multipart>=0.0.32",
     "scikit-learn>=1.9.1",
     "torch>=2.14.0",
     "torchvision>=0.29.0",
+    "uvicorn>=0.53.0",
 ]
 
 [project.scripts]

@@ -3,3 +3,4 @@
 mlflow.db
 mlruns/
 local_data/
+mlartifacts/
