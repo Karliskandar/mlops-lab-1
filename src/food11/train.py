@@ -315,11 +315,17 @@ def main() -> None:
             test_accuracy,
         )
 
+        # Save a CPU-portable copy of the trained model
+        model.to("cpu")
+
         mlflow.pytorch.log_model(
             model,
-            name ="model",
+            name="model",
             serialization_format="pickle",
         )
+
+        # Restore the model to the original training device
+        model.to(device)
 
         print(f"Test accuracy: {test_accuracy:.4f}")
 
