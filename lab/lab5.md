@@ -25,3 +25,8 @@ Question 5:
 
 
 Because smoke declares needs: test, it only runs if the test job succeeds. If Ruff or pytest fails, the smoke job is skipped. Without needs, the two jobs would be independent and could run in parallel, so the Docker smoke test could still run even if the unit tests failed.
+
+
+Question 6:
+
+The first CI run took 2 min 21 s, while the second took 2 min 31 s. The second run successfully restored the uv cache, whereas the first run had no cache available. However, uv sync was already fast and the restored cache was very small, so there was no significant reduction in the total time. The second Docker build also took longer, which made the overall second run slightly slower. This shows that caching can reduce repeated dependency work, but the total CI duration can still vary because every GitHub Actions run uses a fresh runner.
