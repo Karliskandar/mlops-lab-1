@@ -60,11 +60,13 @@ def category_from_filename(filename: str) -> str:
     """Return the Food-11 category for a filename such as '3_120.jpg'."""
     category_id = Path(filename).stem.split("_")[0]
 
+    if category_id == "0":
+        return "Wrong"
+
     try:
         return CLASSES[int(category_id)]
     except (ValueError, IndexError):
         raise ValueError(f"Unknown Food-11 category in filename: {filename}")
-
 
 def resize_image(img: Image.Image, size: int = 128) -> Image.Image:
     """Return an RGB image resized to size x size."""
