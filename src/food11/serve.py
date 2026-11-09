@@ -1,12 +1,13 @@
 import io
 import os
+from typing import Annotated
 
-import mlflow
 import torch
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from PIL import Image, UnidentifiedImageError
 from torchvision import transforms
 
+import mlflow
 
 # MLflow configuration
 MLFLOW_TRACKING_URI = os.getenv(
@@ -52,11 +53,20 @@ transform = transforms.Compose(
 # Connect to MLflow and load the champion model once at startup
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
-model = mlflow.pyfunc.load_model(MODEL_URI)
+model =  None
 
 
 # FastAPI application
 app = FastAPI()
+
+@app.on_event("startup")
+def load_model():
+    global model
+
+    if os.environ.get("SKIP_MODEL"):
+        return
+
+    model = mlflow.pyfunc.load_model(MODEL_URI)
 
 
 @app.get("/health")
@@ -65,7 +75,12 @@ def health():
 
 
 @app.post("/predict")
-def predict(file: UploadFile = File(...)):
+def predict(file: Annotated[UploadFile, File()]):
+    if model is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Model is not loaded",
+        )
     # Basic file-type validation
     if file.content_type not in ("image/jpeg", "image/png"):
         raise HTTPException(

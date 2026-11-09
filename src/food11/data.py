@@ -18,12 +18,23 @@ OUTPUT_ROOT = ROOT / "local_data"
 PROCESSED_ROOT = OUTPUT_ROOT / "food11_processed"
 MINI_ROOT = OUTPUT_ROOT / "food11_processed_mini"
 
-print("SCRIPT IS RUNNING")
-print("ROOT =", ROOT)
-print("RAW_ROOT =", RAW_ROOT if "RAW_ROOT" in globals() else "not defined yet")
 SPLITS = ["training", "evaluation", "validation"]
 
 # Food-11 class mapping
+CLASSES = [
+    "Bread",
+    "Dairy product",
+    "Dessert",
+    "Egg",
+    "Fried food",
+    "Meat",
+    "Noodles-Pasta",
+    "Rice",
+    "Seafood",
+    "Soup",
+    "Vegetable-Fruit",
+]
+#Folder names already used by our processed dataset
 CATEGORIES = {
     "0": "Bread",
     "1": "Dairy_product",
@@ -38,10 +49,29 @@ CATEGORIES = {
     "10": "Vegetable_Fruit",
 }
 
+
 IMAGE_SIZE = (128, 128)
 IMAGE_GLOB_PATTERN = "*.jpg"
 MINI_LIMIT = 100
 RESAMPLE_FILTER = Image.Resampling.LANCZOS
+
+
+def category_from_filename(filename: str) -> str:
+    """Return the Food-11 category for a filename such as '3_120.jpg'."""
+    category_id = Path(filename).stem.split("_")[0]
+
+    try:
+        return CLASSES[int(category_id)]
+    except (ValueError, IndexError):
+        raise ValueError(f"Unknown Food-11 category in filename: {filename}")
+
+
+def resize_image(img: Image.Image, size: int = 128) -> Image.Image:
+    """Return an RGB image resized to size x size."""
+    return img.convert("RGB").resize(
+        (size, size),
+        RESAMPLE_FILTER,
+    )
 
 
 def prepare_output_folders() -> None:
@@ -80,7 +110,7 @@ def process_split(split: str) -> None:
 
         try:
             with Image.open(image_path) as image:
-                image = image.convert("RGB").resize(IMAGE_SIZE, RESAMPLE_FILTER)
+                image = resize_image(image)
         except OSError as exc:
             logger.warning("Skipping unreadable image %s: %s", image_path.name, exc)
             skipped_count += 1

@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - run: uv sync --frozen
+
+      - run: uv run ruff check src tests
+
+      - run: uv run pytest -q
+
+  smoke:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: docker build -t food11-api:ci .
+
+      - name: start the container without a model and probe it
+        run: |
+          docker run -d --name api -p 8000:8000 -e SKIP_MODEL=1 food11-api:ci
+
+          for i in $(seq 1 20); do
+            curl -sf localhost:8000/health && exit 0
+            sleep 2
+          done
+
+          docker logs api
+          exit 1
